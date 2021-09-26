@@ -1,7 +1,8 @@
 module Api
   module V1
     class RecordsController < ApplicationController
-      
+      before_action :set_record, only: [:show]
+
       def create
         number =  params[:value].to_i
         if number >= 10
@@ -17,7 +18,17 @@ module Api
         end
       end
 
+      def show
+        arr = @record.arr.map { |x| x.to_i }
+        range = [arr.min, arr.max]
+        render json: range
+      end
+
       private 
+
+        def set_record
+          @record = Record.find(params[:id])
+        end
 
         def generate_array(number)
           arr = []
