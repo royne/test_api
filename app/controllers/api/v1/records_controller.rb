@@ -19,9 +19,20 @@ module Api
       end
 
       def show
-        arr = @record.arr.map { |x| x.to_i }
-        range = [arr.min, arr.max]
-        render json: range
+        arr = @record.arr.map { |x| x.to_i }.sort
+        range = []
+
+        arr.each_with_index do |x, i|
+          unless (arr.count > i+1 && arr[i+1] - x <= 1)   
+            range.empty? ? range.push([arr[0], x]) : range.push([arr[arr.index(range.last[1]) + 1], x])    
+          end  
+        end  
+
+        arr_max = range.map { |x| x[1]-x[0] } 
+        data = range[arr_max.index(arr_max.max)]
+
+        render json: data
+
       end
 
       private 
